@@ -1,15 +1,17 @@
 package main
 
 import (
+	"log"
 	"net"
 	"time"
 
+	"github.com/MosesHe/gomall/demo/demoproto/conf"
+	"github.com/MosesHe/gomall/demo/demoproto/kitex_gen/pbapi/echoservice"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	"github.com/MosesHe/gomall/demo/demoproto/conf"
-	"github.com/MosesHe/gomall/demo/demoproto/kitex_gen/pbapi/echoservice"
+	consul "github.com/kitex-contrib/registry-consul"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -37,6 +39,14 @@ func kitexInit() (opts []server.Option) {
 	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
+
+	// add consul register
+	r, err := consul.NewConsulRegister(conf.GetConf().Registry.RegistryAddress[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	// 添加到服务启动参数里
+	opts = append(opts, server.WithRegistry(r))
 
 	// klog
 	logger := kitexlogrus.NewLogger()
