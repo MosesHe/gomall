@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/MosesHe/gomall/demo/demoproto/biz/model"
 	"github.com/MosesHe/gomall/demo/demoproto/conf"
 
 	"gorm.io/driver/mysql"
@@ -41,5 +42,6 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+	DB.AutoMigrate(&model.User{})
 	fmt.Println(v)
 }
