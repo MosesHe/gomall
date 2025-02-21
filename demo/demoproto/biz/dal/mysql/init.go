@@ -1,6 +1,9 @@
 package mysql
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/MosesHe/gomall/demo/demoproto/conf"
 
 	"gorm.io/driver/mysql"
@@ -13,7 +16,12 @@ var (
 )
 
 func Init() {
-	DB, err = gorm.Open(mysql.Open(conf.GetConf().MySQL.DSN),
+	dns := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"),
+		os.Getenv("MYSQL_PASSWORD"),
+		os.Getenv("MYSQL_HOST"),
+		os.Getenv("MYSQL_DATABASE"),
+	)
+	DB, err = gorm.Open(mysql.Open(dns),
 		&gorm.Config{
 			PrepareStmt:            true,
 			SkipDefaultTransaction: true,
@@ -22,4 +30,16 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+
+	type Version struct {
+		Version string
+	}
+
+	var v Version
+
+	err = DB.Raw("select version() as version").Scan(&v).Error
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(v)
 }
