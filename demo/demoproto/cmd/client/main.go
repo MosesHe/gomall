@@ -8,6 +8,7 @@ import (
 
 	"github.com/MosesHe/gomall/demo/demoproto/kitex_gen/pbapi"
 	"github.com/MosesHe/gomall/demo/demoproto/kitex_gen/pbapi/echoservice"
+	"github.com/MosesHe/gomall/demo/demoproto/middleware"
 	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/kerrors"
@@ -25,6 +26,7 @@ func main() {
 	c, err := echoservice.NewClient("demoproto", client.WithResolver(r),
 		client.WithTransportProtocol(transport.GRPC),
 		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
+		client.WithMiddleware(middleware.Middleware),
 	)
 	if err != nil {
 		log.Fatal(err)
