@@ -9,6 +9,7 @@ import (
 
 	"github.com/MosesHe/gomall/app/frontend/biz/router"
 	"github.com/MosesHe/gomall/app/frontend/conf"
+	"github.com/MosesHe/gomall/app/frontend/infra/rpc"
 	"github.com/MosesHe/gomall/app/frontend/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/middlewares/server/recovery"
@@ -32,6 +33,7 @@ func main() {
 	_ = godotenv.Load()
 	// init dal
 	// dal.Init()
+	rpc.Init()
 	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address))
 
@@ -48,18 +50,18 @@ func main() {
 
 	h.GET("/signin", func(c context.Context, ctx *app.RequestContext) {
 		data := utils.H{
-			"Title": "Sign In",
+			"title": "Sign In",
 			"Next":  ctx.Query("next"),
 		}
 		ctx.HTML(consts.StatusOK, "signin", data)
 	})
 
 	h.GET("/signup", func(c context.Context, ctx *app.RequestContext) {
-		ctx.HTML(consts.StatusOK, "signup", utils.H{"Title": "Sign Up"})
+		ctx.HTML(consts.StatusOK, "signup", utils.H{"title": "Sign Up"})
 	})
 
 	h.GET("/about", func(c context.Context, ctx *app.RequestContext) {
-		ctx.HTML(consts.StatusOK, "about", utils.H{"Title": "About"})
+		ctx.HTML(consts.StatusOK, "about", utils.H{"title": "About"})
 	})
 
 	h.Spin()
