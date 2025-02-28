@@ -34,3 +34,10 @@ func (p ProductQuery) SearchProducts(q string) (products []*Product, err error) 
 	err = p.db.WithContext(p.ctx).Model(&Product{}).Find(&products, "name like ? or description like ?", "%"+q+"%", "%"+q+"%").Error
 	return
 }
+
+func NewProductQuery(ctx context.Context, db *gorm.DB) *ProductQuery {
+	return &ProductQuery{
+		ctx: ctx,
+		db:  db,
+	}
+}

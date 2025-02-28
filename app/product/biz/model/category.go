@@ -27,3 +27,10 @@ func (c CategoryQuery) GetProductsByCategoryName(name string) (categories []Cate
 	err = c.db.WithContext(c.ctx).Model(&Category{}).Where(&Category{Name: name}).Preload("Products").Find(&categories).Error
 	return
 }
+
+func NewCategoryQuery(ctx context.Context, db *gorm.DB) *CategoryQuery {
+	return &CategoryQuery{
+		ctx: ctx,
+		db:  db,
+	}
+}
