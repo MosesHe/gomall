@@ -1,7 +1,9 @@
 package model
 
-import "gorm.io/gorm"
+import "time"
 
 type Base struct {
-	gorm.Model
+	ID        int `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

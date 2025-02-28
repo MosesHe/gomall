@@ -4,17 +4,21 @@ import (
 	"net"
 	"time"
 
+	"github.com/MosesHe/gomall/app/product/biz/dal"
+	"github.com/MosesHe/gomall/app/product/conf"
+	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	"github.com/MosesHe/gomall/app/product/conf"
-	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func main() {
+	godotenv.Load()
+	dal.Init()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
