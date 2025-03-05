@@ -19,7 +19,6 @@ var (
 	ProductClient productcatalogservice.Client
 	PaymentClient paymentservice.Client
 	once          sync.Once
-	err           error
 )
 
 func InitClient() {
