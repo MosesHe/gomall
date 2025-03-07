@@ -61,7 +61,7 @@
                         </div>
 
                         <ul class="dropdown-menu dropdown-menu-end mt-4">
-                            <li><a class="dropdown-item" href="#">Order Center</a></li>
+                            <li><a class="dropdown-item" href="/order">Order Center</a></li>
                             <li>
                                 <form method="post" action="/auth/logout">
                                     <button class="dropdown-item" type="submit">Logout</button>
@@ -77,10 +77,17 @@
                 </div>
             </div>
         </nav>
+        <div class="text-bg-primary  text-center">
+            <p>This website is only hosted for demo.</p>
+        </div>
+        {{ if .error }}
+        <div class="alert alert-danger text-center" role="alert">{{ .error }}</div>
+        {{ end }}
+        {{ if .warning }}
+        <div class="alert alert-warning text-center" role="alert">{{ .warning }}</div>
+        {{ end }}
     </header>
-    <div class="text-bg-primary  text-center">
-        <p>This website is only hosted for demo.</p>
-    </div>
+
     <main style="min-height: calc(90vh);">
         <div class="container-fluid py-3">
             <h1 class="text-center">{{ $.title }}</h1>

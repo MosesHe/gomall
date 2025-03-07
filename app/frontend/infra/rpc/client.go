@@ -7,6 +7,7 @@ import (
 	frontendUtils "github.com/MosesHe/gomall/app/frontend/utils"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/checkout/checkoutservice"
+	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/order/orderservice"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/user/userservice"
 	"github.com/cloudwego/kitex/client"
@@ -18,6 +19,7 @@ var (
 	ProductClient  productcatalogservice.Client
 	CartClient     cartservice.Client
 	CheckoutClient checkoutservice.Client
+	OrderClient    orderservice.Client
 	once           sync.Once
 )
 
@@ -27,6 +29,7 @@ func Init() {
 		initProductClient()
 		initCartClient()
 		initCheckoutClient()
+		initOrderClient()
 	})
 }
 
@@ -59,5 +62,13 @@ func initCheckoutClient() {
 	frontendUtils.MustHandleError(err)
 
 	CheckoutClient, err = checkoutservice.NewClient("checkout", client.WithResolver(r))
+	frontendUtils.MustHandleError(err)
+}
+
+func initOrderClient() {
+	r, err := consul.NewConsulResolver(conf.GetConf().Hertz.RegistryAddr)
+	frontendUtils.MustHandleError(err)
+
+	OrderClient, err = orderservice.NewClient("order", client.WithResolver(r))
 	frontendUtils.MustHandleError(err)
 }

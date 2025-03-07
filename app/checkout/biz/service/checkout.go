@@ -2,15 +2,16 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/MosesHe/gomall/app/checkout/infra/rpc"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/cart"
 	checkout "github.com/MosesHe/gomall/rpc_gen/kitex_gen/checkout"
+	order "github.com/MosesHe/gomall/rpc_gen/kitex_gen/order"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/payment"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/google/uuid"
 )
 
 type CheckoutService struct {
@@ -30,7 +31,10 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	if cartResult == nil || cartResult.Items == nil {
 		return nil, kerrors.NewGRPCBizStatusError(5004001, "cart is empty")
 	}
-	var total float32
+	var (
+		total float32
+		oi    []*order.OrderItem
+	)
 	for _, item := range cartResult.Items {
 		productResp, resultErr := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{
 			Id: item.ProductId,
@@ -41,12 +45,38 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		if productResp.Product == nil {
 			continue
 		}
-		total += productResp.Product.Price * float32(item.Quantity)
+
+		cost := productResp.Product.Price * float32(item.Quantity)
+		total += cost
+		oi = append(oi, &order.OrderItem{
+			Item: &cart.CartItem{
+				ProductId: item.ProductId,
+				Quantity:  item.Quantity,
+			},
+			Cost: cost,
+		})
 	}
 
+	zipCodeInt, _ := strconv.Atoi(req.Address.ZipCode)
+	orderResp, err := rpc.OrderClient.PlaceOrder(s.ctx, &order.PlaceOrderReq{
+		UserId: req.UserId,
+		Email:  req.Email,
+		Address: &order.Address{
+			StreetAddress: req.Address.StreetAddress,
+			City:          req.Address.City,
+			State:         req.Address.State,
+			ZipCode:       int32(zipCodeInt),
+			Country:       req.Address.Country,
+		},
+		Items: oi,
+	})
+	if err != nil {
+		return nil, kerrors.NewGRPCBizStatusError(5004003, err.Error())
+	}
 	var orderId string
-	u, _ := uuid.NewRandom()
-	orderId = u.String()
+	if orderResp != nil && orderResp.Order != nil {
+		orderId = orderResp.Order.OrderId
+	}
 
 	payReq := &payment.ChargeReq{
 		UserId:  req.UserId,
