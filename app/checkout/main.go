@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/MosesHe/gomall/app/checkout/conf"
+	"github.com/MosesHe/gomall/app/checkout/infra/mq"
 	"github.com/MosesHe/gomall/app/checkout/infra/rpc"
 	"github.com/MosesHe/gomall/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -22,6 +23,7 @@ func main() {
 	// dal.Init()
 	opts := kitexInit()
 	rpc.InitClient()
+	mq.Init()
 
 	svr := checkoutservice.NewServer(new(CheckoutServiceImpl), opts...)
 
