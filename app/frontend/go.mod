@@ -1,11 +1,14 @@
 module github.com/MosesHe/gomall/app/frontend
 
-go 1.22.0
+go 1.23.6
+
+toolchain go1.24.1
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
-	github.com/MosesHe/gomall/rpc_gen v0.0.0-20250305104915-51b52001809d
+	github.com/MosesHe/gomall/common v0.0.0-20250319043500-6e92813ace15
+	github.com/MosesHe/gomall/rpc_gen v0.0.0-20250310040707-943bf88b42ed
 	github.com/cloudwego/hertz v0.9.5
 	github.com/cloudwego/kitex v0.12.3
 	github.com/hertz-contrib/cors v0.1.0

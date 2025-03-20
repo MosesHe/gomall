@@ -1,7 +1,6 @@
 package clientsuite
 
 import (
-	"github.com/MosesHe/gomall/app/cart/conf"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
@@ -22,7 +21,7 @@ func (s *CommonClientSuite) Options() []client.Option {
 		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
 		client.WithTransportProtocol(transport.GRPC),
 	}
-	r, err := consul.NewConsulResolver(conf.GetConf().Registry.RegistryAddress[0])
+	r, err := consul.NewConsulResolver(s.RegistryAddr)
 	if err != nil {
 		panic(err)
 	}

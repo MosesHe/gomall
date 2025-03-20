@@ -31,6 +31,6 @@ func initProductClient() {
 			RegistryAddr:       RegistryAddr,
 		}),
 	}
-	ProductClient, err = productcatalogservice.NewClient("productcatalogservice", opts...)
+	ProductClient, err = productcatalogservice.NewClient("product", opts...)
 	cartUtils.MustHandleError(err)
 }
